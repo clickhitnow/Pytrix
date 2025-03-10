@@ -44,4 +44,3 @@ Uygulamayı çalıştırmak için aşağıdaki bağımlılıkları yükleyin:
 
 ```bash
 pip install flask pandas openpyxl xlsxwriter
-
