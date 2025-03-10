@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Excel Dosya Yükleme, Önizleme ve İndirme</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js">    function fillTable(tableId, dataArray) {
+        var tableHead = $(tableId + ' thead');
+        var tableBody = $(tableId + ' tbody');
+        tableHead.empty();
+        tableBody.empty();
+        
+        if (dataArray.length > 0) {
+            var headerRow = '<tr>';
+            Object.keys(dataArray[0]).forEach(function (key) {
+                headerRow += '<th>' + key + '</th>';
+            });
+            headerRow += '</tr>';
+            tableHead.append(headerRow);
+
+            dataArray.forEach(function (row) {
+                var rowHtml = '<tr>';
+                Object.values(row).forEach(function (value) {
+                    rowHtml += '<td>' + (value ? value : '') + '</td>';
+                });
+                rowHtml += '</tr>';
+                tableBody.append(rowHtml);
+            });
+        }
+    }
+
+    $(document).ready(function () {
+        $('#uploadForm').submit(function (event) {
+            event.preventDefault();
+            var formData = new FormData($('#uploadForm')[0]);
+
+            $.ajax({
+                url: '/preview',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    fillTable('#departmanTable', data['Departman Bazlı Talepler']);
+                    fillTable('#aylikTable', data['Aylık Bazda Talepler']);
+                    fillTable('#mesaiTable', data['Mesai Durumu']);
+                },
+                error: function () {
+                    alert('Veriler getirilirken hata oluştu!');
+                }
+            });
+        });
+    });
+</script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Aylık Rapor için Excel Dosyası Yükle</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" accept=".xlsx" required>
+        <button type="submit">Önizle</button>
+    </form>
+    <button id="downloadBtn" disabled>İndir</button>
+
+    <h3>Önizleme</h3>
+    <h4>Departman Bazlı Ticket</h4>
+    <table id="departmanTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <h4>Aylık Bazda Talepler</h4>
+    <table id="aylikTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <h4>Mesai Durumu</h4>
+    <table id="mesaiTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+    <table id="dataTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            let uploadedFile = null;
+
+            $("#uploadForm").submit(function (event) {
+                event.preventDefault();
+                
+                var formData = new FormData();
+                uploadedFile = $("#fileInput")[0].files[0];
+                formData.append("file", uploadedFile);
+
+                $.ajax({
+                    url: "/preview",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        var tableHead = $("#dataTable thead");
+                        var tableBody = $("#dataTable tbody");
+                        tableHead.empty();
+                        tableBody.empty();
+
+                        if (data.length > 0) {
+                            var headerRow = "<tr>";
+                            Object.keys(data[0]).forEach(function (key) {
+                                headerRow += "<th>" + key + "</th>";
+                            });
+                            headerRow += "</tr>";
+                            tableHead.append(headerRow);
+
+                            data.forEach(function (row) {
+                                var rowHtml = "<tr>";
+                                Object.values(row).forEach(function (value) {
+                                    rowHtml += "<td>" + (value ? value : "") + "</td>";
+                                });
+                                rowHtml += "</tr>";
+                                tableBody.append(rowHtml);
+                            });
+
+                            $("#downloadBtn").prop("disabled", false);
+                        }
+                    },
+                    error: function () {
+                        alert("Dosya yüklenirken hata oluştu!");
+                    }
+                });
+            });
+
+            $("#downloadBtn").click(function () {
+                if (!uploadedFile) {
+                    alert("Lütfen önce bir dosya yükleyin ve önizleyin!");
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append("file", uploadedFile);
+
+                $.ajax({
+                    url: "/download",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhrFields: {
+                        responseType: "blob"
+                    },
+                    success: function (data) {
+                        var a = document.createElement("a");
+                        var url = window.URL.createObjectURL(data);
+                        a.href = url;
+                        a.download = "aylik_ticket_raporu.xlsx";
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function () {
+                        alert("Rapor indirilirken hata oluştu!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
