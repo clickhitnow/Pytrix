@@ -1,46 +1,53 @@
-# Flask ile Excel Veri Analizi Uygulaması
+Pytrix
+Pytrix is a Flask-based reporting tool that analyzes Excel data to automatically categorize support tickets, track department performance, and generate insightful monthly reports.
 
-Bu uygulama, yüklenen Excel dosyalarını işleyerek çeşitli özet raporlar üreten ve sonuçları kullanıcıya sunan bir Flask tabanlı web uygulamasıdır.
+📌 Features
+Upload and analyze Excel data seamlessly.
+Automatically categorize requests as within or outside working hours.
+Generate monthly summaries and reports.
+Identify top customers and frequent ticket sources.
+User-friendly web interface built with Flask.
 
-## İçerik
+🚀 Installation
+Step 1: Clone the Repository
+git clone <repository_url>
+cd Pytrix
 
-- [Proje Hakkında](#proje-hakkında)
-- [Özellikler](#özellikler)
-- [Kurulum ve Çalıştırma](#kurulum-ve-çalıştırma)
-- [Kullanılan Teknolojiler](#kullanılan-teknolojiler)
-- [Uygulama Yapısı](#uygulama-yapısı)
-- [Lisans](#lisans)
 
----
+Step 2: Set Up Environment
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
 
-## Proje Hakkında
+Step 3: Install Dependencies
 
-Bu proje, yüklenen Excel dosyalarını analiz ederek, çeşitli özet tablolar oluşturur. Bu tablolar aşağıdaki bilgileri içerir:
+⚙️ Configuration
+Adjust the upload and report folder paths in app.py:
+UPLOAD_FOLDER = 'path/to/upload'
+REPORT_FOLDER = 'path/to/reports'
 
-- **Departmanlara iletilen taleplerin ay bazında dağılımı**
-- **Mesai içinde ve mesai dışında iletilen talepler**
-- **En çok talep ileten müşterilerin listeleri**
-- **Talebin geliş yolu analizi (Mail, CRM, GSM, Zoom, WhatsApp vb.)**
+Ensure these directories exist or will be created automatically by the application.
 
----
+▶️ Running the Application
+python app.py
+Navigate to http://localhost:5000 in your web browser.
 
-## Özellikler
+📁 Usage
+Upload Excel file: Use the provided interface to upload your Excel file.
+Preview Data: View a summary before downloading the full report.
+Download Report: Generate and download a comprehensive Excel report.
 
-- **Excel dosyası yükleme ve önizleme** özelliği
-- **Dinamik pivot tablolarla raporlama**
-- **Raporların Excel formatında indirilmesi**
+🛠 Built With
+Flask
+Pandas
+XlsxWriter
 
-## Teknolojiler
+📃 License
+This project is open-source under the MIT License.
 
-- Flask
-- Pandas
-- XlsxWriter
+🤝 Contributing
+Contributions are welcome. Please open issues or submit pull requests!
 
-## Kurulum ve Çalıştırma
 
-### Gereksinimler
 
-Uygulamayı çalıştırmak için aşağıdaki bağımlılıkları yükleyin:
 
-```bash
-pip install flask pandas openpyxl xlsxwriter
